@@ -66,7 +66,6 @@ function htmlspecialchars(text) {
 function gen_pw() {
 	$('#genbutton').attr('disabled', 'disabled');
 	$('#pass_cmnt').html('');
-	$('#pass').hide();
 	$('#pass').html('');
 	if($('#use_entropy').attr('checked')) {
 		start_capture();
@@ -153,7 +152,7 @@ function append_pw(pw, hash) {
 }
 
 function finish_pw() {
-	$('#pass').fadeIn('fast');
+	$('#pass').css('opacity', 0).fadeTo('fast', 1);
 	$('#genbutton').removeAttr('disabled');
 }
 
