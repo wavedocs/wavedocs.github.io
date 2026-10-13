@@ -34,7 +34,7 @@ function entropy_done() {
 }
 
 function start_capture() {
-	$('#text').html('РџРµСЂРµРјРµС‰Р°Р№С‚Рµ РјС‹С€РєСѓ, РєР»РёРєР°Р№С‚Рµ, РЅР°Р¶РёРјР°Р№С‚Рµ РєР»Р°РІРёС€Рё РЅР° РєР»Р°РІРёР°С‚СѓСЂРµ,<br>РёР·РјРµРЅСЏР№С‚Рµ СЂР°Р·РјРµСЂС‹ РѕРєРЅР° Р±СЂР°СѓР·РµСЂР° РґР»СЏ РіРµРЅРµСЂР°С†РёРё СЃР»СѓС‡Р°Р№РЅС‹С… РґР°РЅРЅС‹С….');
+	$('#text').html('Перемещайте мышку, кликайте, нажимайте клавиши на клавиатуре,<br>изменяйте размеры окна браузера для генерации случайных данных.')
 	$('#counter').text('0%');
 	$('#diventropy').show('fast');
 	var d = new Date();
@@ -106,6 +106,10 @@ function gen_pw2() {
 						+' bits</i>');
 	var f_fullrand = $('#fullrand').attr('checked');
 	var f_pwgen = $('#pwgen').attr('checked');
+	var f_bcrypt = $('#use_bcrypt').attr('checked') && typeof bcrypt != 'undefined';
+	var bccost = parseInt($('#bccost').val(), 10);
+	if (isNaN(bccost) || bccost < 4 || bccost > 15) bccost = 10;
+	var pws = [];
 	for(j=1;j<=pwnum;j++) {
 		var pw = '';
 		if(f_fullrand) {
@@ -115,8 +119,40 @@ function gen_pw2() {
 		} else if(f_pwgen) {
 			pw = pwgen_generate(pwlen, $('#az2').attr('checked'), $('#n09').attr('checked'), $('#schr').attr('checked'));
 		}
-		$('#pass').html($('#pass').html() + htmlspecialchars(pw) + '<br>');
+		pws.push(pw);
 	}
+	if(f_bcrypt) {
+		var done = 0;
+		$('#pass_cmnt').append('<br>Хэширую bcrypt (cost ' + bccost + ')...');
+		for(var k=0;k<pws.length;k++) {
+			(function(pw) {
+				bcrypt.hash(pw, bccost, function(err, hash) {
+					append_pw(pw, err ? null : hash);
+					done++;
+					if(done == pws.length) finish_pw();
+				});
+			})(pws[k]);
+		}
+	} else {
+		if($('#use_bcrypt').attr('checked')) {
+			$('#pass_cmnt').append('<br><font color="#ff0000">Библиотека bcryptjs не загружена (нет доступа к CDN) — вывод без хэшей.</font>');
+		}
+		for(j=0;j<pws.length;j++) {
+			append_pw(pws[j], null);
+		}
+		finish_pw();
+	}
+}
+
+function append_pw(pw, hash) {
+	var html = htmlspecialchars(pw);
+	if (hash) {
+		html = html + '<span class="pwhash">' + htmlspecialchars(hash) + '</span>';
+	}
+	$('#pass').html($('#pass').html() + html + '<br>');
+}
+
+function finish_pw() {
 	$('#pass').fadeIn('fast');
 	$('#genbutton').removeAttr('disabled');
 }
