@@ -60,6 +60,25 @@
 	font-size: 1em;
 }
 
+#b64block {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	width: 70%;
+	max-width: 760px;
+}
+
+#b64input {
+	flex: 0 1 320px;
+	min-width: 200px;
+}
+
+#b64input, #b64enc, #b64dec {
+	vertical-align: middle;
+}
+
 .pwhash {
 	font-size: 0.75em;
 	font-weight: normal;
