@@ -105,7 +105,8 @@ function gen_pw2() {
 						+' bits</i>');
 	var f_fullrand = $('#fullrand').attr('checked');
 	var f_pwgen = $('#pwgen').attr('checked');
-	var f_bcrypt = $('#use_bcrypt').attr('checked') && typeof bcrypt != 'undefined';
+	var BC = bcrypt_available();
+	var f_bcrypt = $('#use_bcrypt').attr('checked') && BC;
 	var bccost = parseInt($('#bccost').val(), 10);
 	if (isNaN(bccost) || bccost < 4 || bccost > 15) bccost = 10;
 	var pws = [];
@@ -125,7 +126,7 @@ function gen_pw2() {
 		$('#pass_cmnt').append('<br>Хэширую bcrypt (cost ' + bccost + ')...');
 		for(var k=0;k<pws.length;k++) {
 			(function(pw) {
-				bcrypt.hash(pw, bccost, function(err, hash) {
+				BC.hash(pw, bccost, function(err, hash) {
 					append_pw(pw, err ? null : hash);
 					done++;
 					if(done == pws.length) finish_pw();
@@ -134,13 +135,20 @@ function gen_pw2() {
 		}
 	} else {
 		if($('#use_bcrypt').attr('checked')) {
-			$('#pass_cmnt').append('<br><font color="#ff0000">Библиотека bcryptjs не загружена (нет доступа к CDN) — вывод без хэшей.</font>');
+			$('#pass_cmnt').append('<br><font color="#ff0000">Библиотека bcryptjs не загружена — вывод без хэшей.</font>');
 		}
 		for(j=0;j<pws.length;j++) {
 			append_pw(pws[j], null);
 		}
 		finish_pw();
 	}
+}
+
+function bcrypt_available() {
+	// сборка dcodeIO/bcrypt.js в браузере создаёт глобал dcodeIO.bcrypt
+	if (typeof dcodeIO != 'undefined' && dcodeIO.bcrypt) return dcodeIO.bcrypt;
+	if (typeof bcrypt != 'undefined' && bcrypt) return bcrypt;
+	return null;
 }
 
 function append_pw(pw, hash) {

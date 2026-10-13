@@ -55,7 +55,7 @@
 	margin-bottom: 18px;
 }
 
-#genbutton {
+#genbutton, #b64enc, #b64dec {
 	font-weight: bold;
 	font-size: 1em;
 }
