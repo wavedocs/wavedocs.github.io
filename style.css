@@ -6,7 +6,8 @@
 	border: 1px #000000 solid;
 	line-height: 150%;
 	display: none;
-    width: 200px;
+    width: 640px;
+    max-width: 95%;
     margin: 0 auto;
     text-align: center;
 }
@@ -45,4 +46,18 @@
 #genbutton {
 	font-weight: bold;
 	font-size: 1em;
+}
+
+.pwhash {
+	font-size: 0.75em;
+	font-weight: normal;
+	color: #666666;
+}
+
+#b64out {
+	text-align: center;
+	font-family: monospace;
+	word-wrap: break-word;
+	max-width: 80%;
+	margin: 0 auto 18px auto;
 }
